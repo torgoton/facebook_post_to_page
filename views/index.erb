@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>Facebook Post to Page</title>
+  </head>
+  <body>
+    <h1>Facebook Post to Page</h1>
+
+    <% if @error %>
+      <div style="color: darkred;">
+        <h3>Facebook OAuth authentication failed</h3>
+        <ul>
+          <% @error.each do |key, value| %>
+            <li><strong><%= key %>:</strong> <%= value %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if @notice %>
+      <div style="color: darkgreen;">
+        <h3><%= @notice.lines[0] %></h3>
+        <p><%= @notice.lines[1..-1].join %></p>
+      </div>
+    <% end %>
+
+    <h2>Current Facebook Page Name: <%= session["page_name"] || 'None' %></h2>
+    <table border="1">
+      <tr>
+        <th>Page Name</th>
+        <th>Page ID</th>
+        <th>Access Token</th>
+      </tr>
+      <tr>
+        <td><%= session["page_name"] || 'N/A' %></td>
+        <td><%= session["page_id"] || 'N/A' %></td>
+        <td><%= session["page_access_token"] ? 'Set' : 'None' %></td>
+      </tr>
+    </table>
+
+    <h2><a href=<%= @facebook_login_path %>>Login with Facebook</a></h2>
+    <form method="POST" action="/logout">
+      <input type='submit' value='Log out' />
+    </form>
+
+    <% if session["page_data"] %>
+      <h2>Available Pages:</h2>
+      <p>(choose one and click "Submit" to set it as the current page)</p>
+      <form method="POST" action="/select_page">
+        <select name="page_id">
+          <% session["page_data"].each do |page| %>
+            <option value="<%= page["id"] %>"><%= page["name"] %></option>
+          <% end %>
+        </select>
+        <input type="submit" value="Submit" />
+      </form>
+    <% end %>
+
+    <% if session["page_access_token"] %>
+      <h2>Post to Facebook Page:</h2>
+      <form method="POST" action="/post_to_page">
+        <textarea
+          name="message"
+          rows="8"
+          cols="60" 
+          placeholder="Enter your post message here..."></textarea>
+        <br/>
+        <input type="submit" value="Post to Facebook" />
+      </form>
+    <% end %>
+  </body>
+</html>
+
