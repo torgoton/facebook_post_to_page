@@ -46,7 +46,6 @@ class App < Roda
 
     r.on "select_page" do
       r.post do
-        puts "PARAMS: #{r.params.inspect}"
         page_id = r.params["page_id"]
         page_access_token = session["page_data"].find { |page| page["id"] == page_id }&.[]("access_token")
         if page_id && page_access_token
